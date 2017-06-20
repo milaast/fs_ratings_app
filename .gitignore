@@ -1,0 +1,5 @@
+*.pyc
+env/
+*secret*
+mind-blown.gif
+penny-arcade.jpg
