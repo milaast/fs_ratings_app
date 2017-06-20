@@ -1,7 +1,7 @@
 """Utility file to seed ratings database from MovieLens data in seed_data/"""
 
 from sqlalchemy import func
-from model import User, Movie
+from model import User, Movie, Rating
 # from model import Rating
 # from model import Movie
 
@@ -49,16 +49,18 @@ def load_movies():
 
         if title_and_year != "unknown":
 
-            title_and_year = title_and_year.split()
-            title_and_year.pop()
-            title_string = " ".join(title_and_year)
+            title_and_year = title_and_year[:-7]
+
+            # title_and_year = title_and_year.split()
+            # title_and_year.pop()
+            # title_string = " ".join(title_and_year)
+
+            # it could be done either using split and pop or with string slicing.
 
             movie = Movie(movie_id=movie_id,
-                          title=title_string,
+                          title=title_and_year,
                           released_at=release_date,
                           imdb_url=imdb_url)
-
-
 
         db.session.add(movie)
 
@@ -67,6 +69,26 @@ def load_movies():
 
 def load_ratings():
     """Load ratings from u.data into database."""
+
+    print "Ratings"
+
+    Rating.query.delete()
+
+    for row in open("seed_data/u.data"):
+        row = row.rstrip()
+        row = row.split()
+        ratings_data = row[0:3]
+        user_id, movie_id, score = ratings_data
+
+        if movie_id != '267':
+
+            rating = Rating(user_id=user_id,
+                            movie_id=movie_id,
+                            score=score)
+
+        db.session.add(rating)
+
+    db.session.commit()
 
 
 def set_val_user_id():
@@ -91,5 +113,5 @@ if __name__ == "__main__":
     # Import different types of data
     load_users()
     load_movies()
-    # load_ratings()
+    load_ratings()
     # set_val_user_id()
