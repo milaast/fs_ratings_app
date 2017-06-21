@@ -43,10 +43,18 @@ class Movie(db.Model):
         the_m_rep = "<Movie movie_id=%s title=%s>"
         return the_m_rep % (self.movie_id, self.title)
 
-    movie_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    title = db.Column(db.String, nullable=False)
-    released_at = db.Column(db.DateTime, nullable=True)
-    imdb_url = db.Column(db.String, nullable=True)
+    movie_id = db.Column(db.Integer,
+                         autoincrement=True,
+                         primary_key=True)
+
+    title = db.Column(db.String,
+                      nullable=False)
+
+    released_at = db.Column(db.DateTime,
+                            nullable=True)
+
+    imdb_url = db.Column(db.String,
+                         nullable=True)
 
 
 class Rating(db.Model):

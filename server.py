@@ -37,6 +37,48 @@ def user_list():
     return render_template("user_list.html",
                            users=users)
 
+
+@app.route("/registration")
+def reg_form():
+    """Shows user account registration form."""
+
+    return render_template("registration.html")
+
+
+@app.route("/registration", methods=["POST"])
+def create_account():
+    """Create user account.
+
+        Checks database and, if e-mail does not exist there yet, creates a
+        new user account."""
+
+    password = request.form.get("password")
+    age = request.form.get("age")
+    zipcode = request.form.get("zipcode")
+    email = request.form.get("email")
+
+    existing_user = User.query.filter(User.email == email).first()
+
+    if existing_user is None:
+
+        new_user = User(email=email,
+                        password=password,
+                        age=age,
+                        zipcode=zipcode)
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        flash("You successfully created an account")
+        return redirect("/")
+
+    else:
+        flash("That e-mail address is already in use!")
+        
+        # keep them at page and ask for a new email or for them to try logging in.
+
+
+
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
     # point that we invoke the DebugToolbarExtension
@@ -48,6 +90,4 @@ if __name__ == "__main__":
     # Use the DebugToolbar
     DebugToolbarExtension(app)
 
-
-    
     app.run(port=5000, host="0.0.0.0")

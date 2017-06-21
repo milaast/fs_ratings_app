@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+
+  <h2>You better create an account!!</h2>
+
+    <form action="/registration" method="POST">
+      E-mail address: 
+      <input type="email" name="email" required><br><br>
+      Password (must be 4 to 12 characters): 
+      <input type="password" name="password"><br><br>
+      Age: 
+      <input type="number" name="age"><br><br>
+      Zipcode:
+      <input type="number" name="zipcode"><br><br>
+      <input type="submit" value="Create now!">
+    </form>
+    
+
+
+{% endblock %}
+
+
+<!-- Form validation! (JS???) 
+email - min char/look for @ and .
+password - from 4 to 12 char
+age - int, up to 3 digits
+zipcode - exact 5 digits -->
