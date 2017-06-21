@@ -37,6 +37,12 @@ class Movie(db.Model):
 
     __tablename__ = "movies"
 
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        the_m_rep = "<Movie movie_id=%s title=%s>"
+        return the_m_rep % (self.movie_id, self.title)
+
     movie_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     title = db.Column(db.String, nullable=False)
     released_at = db.Column(db.DateTime, nullable=True)
@@ -47,6 +53,13 @@ class Rating(db.Model):
     """Movie scores on ratings website."""
 
     __tablename__ = "ratings"
+
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        the_r_rep = "<Rating rating_id=%s movie_id=%s user_id=%s score=%s>"
+        return the_r_rep % (self.rating_id, self.movie_id, self.user_id,
+                            self.score)
 
     rating_id = db.Column(
         db.Integer,
@@ -69,11 +82,17 @@ class Rating(db.Model):
 
     # user movie relationship
 
-    movie = db.relationship('Movie')
-    user = db.relationship('User')
+    movie = db.relationship('Movie',
+                            backref=db.backref('ratings',
+                                               order_by=rating_id))
+
+    user = db.relationship('User',
+                           backref=db.backref('ratings',
+                                              order_by=rating_id))
 
 ##############################################################################
 # Helper functions
+
 
 def connect_to_db(app):
     """Connect the database to our Flask app."""
