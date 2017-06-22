@@ -59,7 +59,7 @@ def create_account():
 
     existing_user = User.query.filter(User.email == email).first()
 
-    if existing_user is None:
+    if not existing_user:
 
         new_user = User(email=email,
                         password=password,
@@ -76,8 +76,6 @@ def create_account():
         flash("That e-mail address is already in use!")
         return redirect("/registration")
 
-        # need flash messages for create acct and acct already exists
-
 
 @app.route("/login")
 def show_login():
@@ -92,26 +90,27 @@ def log_user_in():
     form_password = request.form.get("password")
 
     existing_user = User.query.filter(User.email == email).first()
-    user_password = existing_user.password
 
-    if existing_user is None:
+    if not existing_user:
 
         flash("You must create an account first")
         return redirect("/login")
 
-    elif form_password == user_password:
-
-        session["email"] = email
-
-        flash("You've successfully logged in")
-        return redirect("/")
-
     else:
 
-        flash("The password you entered does not match your account")
-        return redirect("/login")
+        user_password = existing_user.password
 
-    # flash messages not working - need to fix
+        if form_password != user_password:
+
+            flash("The password you entered does not match your account")
+            return redirect("/login")
+
+        else:
+
+            session["email"] = email
+
+            flash("You've successfully logged in")
+            return redirect("/")
 
 
 @app.route("/logout")
@@ -123,8 +122,6 @@ def log_user_out():
     return redirect("/")
 
     # not sure if should redirect or render homepage template
-
-
 
 
 if __name__ == "__main__":

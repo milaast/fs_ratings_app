@@ -9,11 +9,13 @@
   Ratings
   <hr>
 
+  <ul>
+    {% for message in get_flashed_messages() %}
+      <li>{{ message }}</li>
+    {% endfor %}
+  </ul> 
+
   {% block content %} put your content here {% endblock %}
-
-  <p><a href="/logout">Logout</a></p>
-
-  <!-- logout link not displaying on any html pages -->
 
 </body>
 
