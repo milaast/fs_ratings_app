@@ -124,6 +124,30 @@ def log_user_out():
     # not sure if should redirect or render homepage template
 
 
+@app.route("/users/*?*")
+def show_profile():
+
+    user_id = request.args.get("user_id")
+
+    user_info = User.query.filter(User.user_id == user_id).one()
+
+    user_age = user_info.age
+    user_zipcode = user_info.zipcode
+    user_email = user_info.email
+
+    ratings_list = db.session.query(Movie.title,
+                                    Rating.score).join(Rating).filter(Rating.user_id == user_id).all()
+
+    return render_template("user_profile.html",
+                           ratings_list=ratings_list,
+                           user_id=user_id,
+                           user_age=user_age,
+                           user_zipcode=user_zipcode,
+                           user_email=user_email)
+
+    # need to fix route to get to requested user by user id
+
+
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
     # point that we invoke the DebugToolbarExtension
