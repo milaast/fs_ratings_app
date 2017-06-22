@@ -74,8 +74,56 @@ def create_account():
 
     else:
         flash("That e-mail address is already in use!")
-        
-        # keep them at page and ask for a new email or for them to try logging in.
+        return redirect("/registration")
+
+        # need flash messages for create acct and acct already exists
+
+
+@app.route("/login")
+def show_login():
+
+    return render_template("login.html")
+
+
+@app.route("/login", methods=["POST"])
+def log_user_in():
+
+    email = request.form.get("email")
+    form_password = request.form.get("password")
+
+    existing_user = User.query.filter(User.email == email).first()
+    user_password = existing_user.password
+
+    if existing_user is None:
+
+        flash("You must create an account first")
+        return redirect("/login")
+
+    elif form_password == user_password:
+
+        session["email"] = email
+
+        flash("You've successfully logged in")
+        return redirect("/")
+
+    else:
+
+        flash("The password you entered does not match your account")
+        return redirect("/login")
+
+    # flash messages not working - need to fix
+
+
+@app.route("/logout")
+def log_user_out():
+
+    session.clear()
+    flash("You've successfully logged out")
+
+    return redirect("/")
+
+    # not sure if should redirect or render homepage template
+
 
 
 
