@@ -29,6 +29,15 @@ def index():
     return render_template("homepage.html")
 
 
+@app.route("/movies")
+def movies_list():
+    """Show list of movies."""
+
+    movies = Movie.query.all()
+    return render_template("movies_list.html",
+                           movies=movies)
+
+
 @app.route("/users")
 def user_list():
     """Show list of users."""
@@ -90,6 +99,7 @@ def log_user_in():
     form_password = request.form.get("password")
 
     existing_user = User.query.filter(User.email == email).first()
+    user_id = existing_user.user_id
 
     if not existing_user:
 
@@ -107,10 +117,10 @@ def log_user_in():
 
         else:
 
-            session["email"] = email
+            session["user_id"] = user_id
 
             flash("You've successfully logged in")
-            return redirect("/")
+            return redirect("/users/" + str(user_id))
 
 
 @app.route("/logout")
@@ -121,31 +131,22 @@ def log_user_out():
 
     return redirect("/")
 
-    # not sure if should redirect or render homepage template
+
+@app.route("/users/<user_id>")
+def show_profile(user_id):
+
+    user = User.query.get(user_id)
+
+    return render_template("user_profile2.html", user=user)
 
 
-@app.route("/users/*?*")
-def show_profile():
+@app.route("/movies/<movie_id>")
+def show_movie_details(movie_id):
 
-    user_id = request.args.get("user_id")
+    movie = Movie.query.get(movie_id)
 
-    user_info = User.query.filter(User.user_id == user_id).one()
+    return render_template("movie_details.html", movie=movie)
 
-    user_age = user_info.age
-    user_zipcode = user_info.zipcode
-    user_email = user_info.email
-
-    ratings_list = db.session.query(Movie.title,
-                                    Rating.score).join(Rating).filter(Rating.user_id == user_id).all()
-
-    return render_template("user_profile.html",
-                           ratings_list=ratings_list,
-                           user_id=user_id,
-                           user_age=user_age,
-                           user_zipcode=user_zipcode,
-                           user_email=user_email)
-
-    # need to fix route to get to requested user by user id
 
 
 if __name__ == "__main__":
